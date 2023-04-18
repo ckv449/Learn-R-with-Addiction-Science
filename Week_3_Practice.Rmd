@@ -1,0 +1,75 @@
+---
+title: 'Learn R with Addiction Science: Group Practice Questions'
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+First, let's load our data, and the TidyVerse.
+
+```{r}
+# Only use these if you do not have them installed:
+# install.packages("tidyverse")
+# intstall.packages("palmerpenguins")
+library(tidyverse)
+library(palmerpenguins)
+
+# Now let's save our data as an object
+peng <- penguins
+```
+
+For these practice questions, we'll be using all of the functions we've practiced so far:
+
+-   ggplot() + all of the different types of graphs (or "geoms")
+
+    -   scatter plot: geom_point()
+
+    -   boxplot: geom_box()
+
+    -   bar chart: geom_bar()
+
+-   filter() - Filter in/out data that you are not interested in. Can be used to "subset", or split a larger data set into smaller data sets based on criteria.
+
+-   summarize() - Can be used to create smaller summaries of a data set.
+
+    -   mean() - Can be used to calculate the mean of a column, list, or other collection of numbers
+
+    -   sd() - Can be used to calculate the standard deviation of a column, list, or other collection of numbers
+
+    -   All common central tendency statistics (mean, median, mode) and measures of spread (standard deviaton, variance, etc) have similar functions.
+
+-   group_by() - Can use one column to group the data by. Then, can be used to feed into summaries to group our summarized data
+
+Now that we've reviewed these functions, use them to answer the questions below:
+
+1.  How many penguins live on each of the three islands within the data set? How many male penguins live on Dream Island?
+
+    ```{r}
+    peng %>% group_by(island, sex) %>% summarise(count = n())
+    ```
+
+2.  What is the average body mass (in grams) of all the penguins represented in the data set?
+
+    ```{r}
+
+    ```
+
+3.  Create a scatter plot of bill length and depth for all penguins in the data set. Once you have, differentiate penguins by species using either a) different colors, b) different size points, or c) different points shapes.
+
+    ```{r}
+    ggplot(peng) + geom_point(mapping = aes(x = bill_length_mm, y = bill_depth_mm, color = species))
+    ```
+
+4.  How many Chinstrap penguins live on each island? Make a bar chart that demonstrates these counts. Include only Chinstrap penguins.
+
+    ```{r}
+
+    ```
+
+5.  How many penguins were recorded on Torgersen Island in each year data was collected?
+
+    ```{r}
+
+    ```
