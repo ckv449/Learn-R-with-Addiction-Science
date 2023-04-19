@@ -1,0 +1,96 @@
+---
+title: "Learn R with Addiction Science - 2023-03-17 - Practice Questions"
+author: "test"
+date: "2023-03-17"
+output: html_document
+---
+First, let's load our data, and the TidyVerse.
+
+```{r}
+# Only use these if you do not have them installed:
+# install.packages("tidyverse")
+# intstall.packages("palmerpenguins")
+library(tidyverse)
+library(nycflights13)
+
+# Now let's save our data as an object
+df <- flights
+View(df)
+
+```
+
+For these practice questions, we'll be using all of the functions we've practiced so far:
+
+    -   ggplot() + all of the different types of graphs (or "geoms")
+
+    -   scatter plot: geom_point()
+
+    -   boxplot: geom_box()
+
+    -   bar chart: geom_bar()
+    
+    -   facet charts: facet_wrap(~ y) - This will split up charts based on the variable you put on the right side of the ~
+
+    -   filter() - Filter in/out data that you are not interested in. Can be used to "subset", or split a larger data set into smaller data sets based on criteria.
+
+    -   summarize() - Can be used to create smaller summaries of a data set.
+
+    -   mean() - Can be used to calculate the mean of a column, list, or other collection of numbers
+
+    -   sd() - Can be used to calculate the standard deviation of a column, list, or other collection of numbers
+
+    -   All common central tendency statistics (mean, median, mode) and measures of spread (standard deviation, variance, etc) have similar functions.
+
+    -   group_by() - Can use one column to group the data by. Then, can be used to feed into summaries to group our summarized data
+
+    -   select() - With this function, we can make a smaller dataset by selecting only the columns we want.
+
+    -   mutate() - This function will help you create new variables or modify existing ones.
+
+    -   as_factor() - Converts data from a different type to a factor (categorical) type.
+
+Now that we've reviewed these functions, use them to answer the questions below:
+
+1. Read and follow the instructions in the comments below.
+```{r}
+# First, run the code on the line below:
+df <- df[-c(6,8)]
+# This line of code has dropped the variables for departure delay (dep_delay) and scheduled time of arrival (sched_arr_time)! Now, it's up to you to recalculate them:
+
+
+
+
+```
+
+2. Create new data frames! Currently the flight data is all in a single data frame. Sometimes it is better to have data split up based on time period. Use the select() function to create two data frames. The first should have the date, carrier, flight, and all departure information. The second should have the date, carrier, flight, and all arrival information. Name them what you want!
+```{r}
+
+
+```
+
+3. It's time for quarterly reports! The plane execs (I assume that's what they're called) want to know how badly delayed flights' arrivals have been. First, create a new variable for quarter (calendar, not fiscal). Then, create a violin plot (geom_violin) to visualize arrival delay. Finally, these plane execs don't all work together. Separate the graphs based on carrier using a facet function (facet_wrap()). Feel free to give it some color!
+Save this chart as an object called "violin_carrier".
+```{r}
+
+
+```
+
+4. The plane execs didn't like your graph. Turns out they don't know what the carrier abbreviations mean, either! That means it's time to get fancy. Follow the instructions below.
+```{r}
+# First, you need to use a new dataset. Run the line below to get info:
+?airlines
+
+# This data set includes both carrier abbreviation and actual airline names.
+# In order to combine both data frames (the one you've been using and this new one) using the left_join() command:
+?left_join
+
+# Use left_join() to create a new dataset. Then recreate the violin plot from question 3, but include airline names rather than carrier abbreviation. Save this chart as an object called "violin_airline".
+
+
+```
+
+
+
+
+
+

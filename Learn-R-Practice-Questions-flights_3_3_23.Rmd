@@ -1,0 +1,103 @@
+---
+title: 'Learn R with Addiction Science: Group Practice Questions - Set 2'
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+First, let's load our data, and the TidyVerse.
+
+```{r}
+# Only use these if you do not have them installed:
+# install.packages("tidyverse")
+# intstall.packages("palmerpenguins")
+library(tidyverse)
+library(nycflights13)
+
+# Now let's save our data as an object
+df <- flights
+View(flights)
+
+# And let's inspect what else is in the package
+?airlines
+?airports
+?planes
+?weather
+```
+
+For these practice questions, we'll be using all of the functions we've practiced so far:
+
+-   ggplot() + all of the different types of graphs (or "geoms")
+
+    -   scatter plot: geom_point()
+
+    -   boxplot: geom_box()
+
+    -   bar chart: geom_bar()
+
+-   filter() - Filter in/out data that you are not interested in. Can be used to "subset", or split a larger data set into smaller data sets based on criteria.
+
+-   summarize() - Can be used to create smaller summaries of a data set.
+
+    -   mean() - Can be used to calculate the mean of a column, list, or other collection of numbers
+
+    -   sd() - Can be used to calculate the standard deviation of a column, list, or other collection of numbers
+
+    -   All common central tendency statistics (mean, median, mode) and measures of spread (standard deviation, variance, etc) have similar functions.
+
+-   group_by() - Can use one column to group the data by. Then, can be used to feed into summaries to group our summarized data
+
+-   select() - With this function, we can make a smaller dataset by selecting only the columns we want.
+
+-   mutate() - This function will help you create new variables or modify existing ones.
+
+-   as_factor() - Converts data from a different type to a factor (categorical) type.
+
+Now that we've reviewed these functions, use them to answer the questions below:
+
+1.  What is the average speed of every flight by month?
+
+    ```{r}
+df = df%>% mutate(flight_speed_mph = distance/air_time*60)
+    df
+    
+    monthly = df%>% group_by(month)
+    monthly%>% summarize(mean(flight_speed_mph, na.rm = TRUE))
+    ```
+
+2.  Create a bar graph of the number of flights per carrier. Which carrier (name, not abbreviation) has the most flights?
+
+    ```{r}
+    flightsbycarrier = ggplot(df) +geom_bar (mapping = aes(x = carrier)) 
+    
+    print("UA has the most flights.")
+    print(flightsbycarrier)
+    ```
+
+3.  What is the average delay in arrival for planes originating from JFK in March?
+
+    ```{r}
+    onlyJFK = df %>% filter (origin == "JFK", month == '3')
+    onlyJFK
+    JFKdelay = onlyJFK %>% select (arr_delay)
+    JFKdelay%>% summarize(mean(arr_delay, na.rm = TRUE))
+
+    ```
+
+4.  Create a scatterplot which shows the relationship between the delay in departure and the delay in arrival. What kind of relationship do these numbers have?
+
+    ```{r}
+ggplot(data=df) + geom_point(mapping=aes(x=arr_delay, y = dep_delay))
+
+    ```
+
+5.  What is the average distance traveled by originating airport in kilometers?
+
+    ```{r}
+    distancetraveled = df %>% select (distance, origin)
+    distancetraveled = distancetraveled %>% group_by(origin)
+    distancetraveled%>% summarize(mean(distance, na.rm = TRUE))
+
+    ```
