@@ -1,0 +1,133 @@
+---
+title: 'Class 1: Import, Inspect, and Visualize Data'
+author: "Zach Budesa"
+date: "2023-05-16"
+output: html_document
+---
+
+```{r setup}
+library(readr)
+library(tidyverse)
+```
+
+
+```{r}
+training_data <- read_csv("data/training-scales.csv")
+```
+
+# Inspect
+```{r}
+glimpse(training_data)
+
+dim(training_data)
+
+summary(training_data)
+
+head(training_data)
+```
+
+```{r}
+hist(training_data$ooas6)
+qplot(training_data$mhl2)
+```
+
+
+# Scores
+
+```{r}
+training_data %>% 
+  summarise(duration_mean = mean(duration_in_seconds),
+            duration_sd = sd(duration_in_seconds),
+            burnout1_mean = mean(burnout1),
+            burnout1_sd = sd(burnout1))
+
+```
+
+```{r}
+training_data %>% 
+  summarise(duration_mean = mean(duration_in_seconds),
+            duration_sd = sd(duration_in_seconds),
+            burnout1_mean = mean(burnout1, na.rm = TRUE),
+            burnout1_sd = sd(burnout1, na.rm = TRUE))
+```
+
+```{r}
+training_data %>% 
+  group_by(leo) %>% 
+  summarise(duration_mean = mean(duration_in_seconds),
+            duration_sd = sd(duration_in_seconds),
+            burnout1_mean = mean(burnout1, na.rm = TRUE),
+            burnout1_sd = sd(burnout1, na.rm = TRUE))
+```
+
+## An alternative summarization
+```{r}
+training_data %>% 
+  pivot_longer(burnout1:burnout9) %>% 
+  
+  group_by(name) %>% 
+  summarize(mean = mean(value, na.rm = TRUE),
+            sd = sd(value, na.rm = TRUE),
+            med = median(value, na.rm = TRUE),
+            IQR = IQR(value, na.rm = TRUE))
+```
+
+### A brief stats lesson: Standard Deviation & IQR, Simple Measures of Spread
+#### Standard Deviation
+$$
+\sigma = \sqrt{\sigma^2} = \sqrt{\frac{\Sigma(x_i - \mu)^2}{N}}
+$$
+#### Interquartile Range
+```{r}
+x <- seq(1:10)
+x
+
+median(x)
+
+quantile(x)
+
+7.75-3.25
+IQR(x)
+```
+
+
+## Missing Data
+```{r}
+sum(complete.cases(training_data))
+
+missing_pct <- function(data){
+  # The total count of missing data
+  sum(is.na(data))/
+    # count of all data (missing + non-missing)
+    (sum(is.na(data)+!is.na(data)))
+}
+
+missing_pct(training_data)
+
+
+
+```
+
+
+
+
+# Visualize
+
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_point(aes(x = age, y = year_field))
+```
+
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_point(aes(x = age, y = year_field, color = factor(leo)))
+```
+
+
+##### Session Info
+```{r}
+sessionInfo()
+```
+
