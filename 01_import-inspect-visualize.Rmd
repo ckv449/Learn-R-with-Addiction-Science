@@ -27,8 +27,10 @@ head(training_data)
 ```
 
 ```{r}
+plot(training_data$burnout4)
 hist(training_data$ooas6)
 qplot(training_data$mhl2)
+?
 ```
 
 
@@ -103,9 +105,6 @@ missing_pct <- function(data){
 }
 
 missing_pct(training_data)
-
-
-
 ```
 
 
