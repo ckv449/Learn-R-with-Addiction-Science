@@ -112,6 +112,7 @@ missing_pct(training_data)
 
 
 # Visualize
+## Scatterplots
 
 ```{r}
 training_data %>% 
@@ -124,6 +125,68 @@ training_data %>%
   ggplot() +
   geom_point(aes(x = age, y = year_field, color = factor(leo)))
 ```
+
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_point(aes(x = age, y = year_field, color = factor(leo))) +
+  facet_wrap(~ leo)
+```
+
+## Barcharts
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_bar(aes(x = gend))
+```
+
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_bar(aes(x = gend)) +
+  facet_wrap(~ leo)
+```
+
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_bar(aes(x = gend, fill = gend)) +
+  facet_wrap(~ leo) +
+  coord_flip()
+```
+
+## Box and Violin Plots
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_boxplot(aes(x = ethnicity, y = age, fill = ethnicity))
+```
+
+
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_violin(aes(x = ethnicity, y = age, fill = ethnicity))
+```
+
+```{r}
+training_data %>% 
+  ggplot() +
+  geom_violin(aes(x = ethnicity, y = age, fill = ethnicity)) +
+  geom_boxplot(aes(x = ethnicity, y = age), width = .3)
+```
+
+```{r}
+training_data %>% 
+  ggplot(aes(x = ethnicity, y = age)) +
+  geom_violin(aes(fill = ethnicity)) +
+  geom_boxplot( width = .3)
+```
+
+
+
+
+
 
 
 ##### Session Info
