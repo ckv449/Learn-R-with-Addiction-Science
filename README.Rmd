@@ -1,0 +1,19 @@
+---
+title: 'README'
+author: "Zach Budesa"
+date: "2023-05-16"
+output: html_document
+---
+
+# Class Description
+
+
+# Class Outline
+
+
+# How to Use
+
+
+# Credits
+## Books to check out
+
