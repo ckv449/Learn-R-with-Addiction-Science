@@ -1,0 +1,70 @@
+---
+title: 'Lesson 2 - Tidy Functions: Select, Filter, and Mutate'
+author: "Zach Budesa"
+date: "2023-05-16"
+output: html_document
+---
+
+```{r setup}
+library(readr)
+library(tidyverse)
+```
+
+
+```{r}
+training_data <- read_csv("data/training-scales.csv")
+```
+
+```{r}
+head(training_data)
+```
+
+```{r}
+mean(training_data$progress)
+
+min(training_data$progress)
+
+max(training_data$progress)
+
+range(training_data$progress)
+
+sd(training_data$progress)
+
+table(training_data$progress)
+```
+
+# Select
+```{r}
+
+progress_ooas <- select(training_data, progress, ooas1, ooas2, ooas3, ooas4, ooas5, ooas6)
+
+progress_ooas2 <- training_data %>% select(., progress, ooas1, ooas2, ooas3, ooas4, ooas5, ooas6)
+
+progress_ooas3 <- training_data %>% select(progress, ooas1, ooas2, ooas3, ooas4, ooas5, ooas6)
+```
+
+```{r}
+all.equal(progress_ooas, progress_ooas2)
+
+all.equal(progress_ooas2, progress_ooas3)
+
+progress_ooas_missing6 <- training_data %>% select(progress, ooas1, ooas2, ooas3, ooas4, ooas5)
+
+all.equal(progress_ooas3, progress_ooas_missing6)
+
+all.equal(progress_ooas3, training_data)
+
+progress.ooas
+```
+
+# Filter
+
+
+
+# Mutate
+
+### Session Info
+```{r}
+sessionInfo()
+```
+

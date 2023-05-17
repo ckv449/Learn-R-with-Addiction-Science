@@ -1,5 +1,5 @@
 ---
-title: 'Class 1: Import, Inspect, and Visualize Data'
+title: 'Lesson 1 - Exploratory Data Analysis: Import, Inspect, and Visualize Data'
 author: "Zach Budesa"
 date: "2023-05-16"
 output: html_document
@@ -34,8 +34,7 @@ qplot(training_data$mhl2)
 ```
 
 
-# Scores
-
+# Investigating Scores
 ```{r}
 training_data %>% 
   summarise(duration_mean = mean(duration_in_seconds),
@@ -72,6 +71,21 @@ training_data %>%
             sd = sd(value, na.rm = TRUE),
             med = median(value, na.rm = TRUE),
             IQR = IQR(value, na.rm = TRUE))
+```
+
+
+## Sum Scores
+```{r}
+with(training_data,
+     rowSums(cbind(burnout1, burnout2, burnout3,
+                   burnout4, burnout5, burnout6,
+                   burnout7, burnout8, burnout9), na.rm = TRUE)
+)
+
+burnout <- training_data %>% 
+  select(burnout1:burnout9)
+
+
 ```
 
 ### A brief stats lesson: Standard Deviation & IQR, Simple Measures of Spread
