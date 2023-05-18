@@ -4,8 +4,14 @@ author: "Zach Budesa"
 date: "2023-05-16"
 output: html_document
 ---
+# Set up, load packages, import data
+```{r}
+# Use if you have never ran any R code using {readr} or {tidyverse}
+# packages <- c("readr", "tidyverse")
+# install.packages(packages)
+```
 
-```{r setup}
+```{r}
 library(readr)
 library(tidyverse)
 ```
