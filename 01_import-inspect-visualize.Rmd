@@ -4,43 +4,80 @@ author: "Zach Budesa"
 date: "2023-05-16"
 output: html_document
 ---
+
 # Set up, load packages, import data
+
+The first thing you will always need to do is make sure that you have the correct packages installed, and ready to use. This first block is code that will install them if you don't have them. You can see that the code in this block isn't set to run! By adding `#` anywhere in a line of code, nothing following `#` will run. This is a useful tool we'll use throughout our work. Commenting is a key tool for making code that other people can use. We'll talk more about it later.
+
 ```{r}
 # Use if you have never ran any R code using {readr} or {tidyverse}
 # packages <- c("readr", "tidyverse")
 # install.packages(packages)
 ```
 
+Once you are sure that you have the correct packages installed, this block will load both of the packages you need. You'll see here that {tidyverse} is the last package loaded. Because the Tidyverse as a whole consists of multiple package, it is always useful to load. The thing to keep in mind is that the functions you will come to know and love from the Tidyverse are used in a lot of other packages! If you load {tidyverse}, then other packages, those packages may have functions that use the same call, but do something completely different. By loading it last, you can prevent code breaking problems!
+
+We're also using {readr} to load our data. There are myraid options for loading data in R, and readr is one that's useful for .csvs. But! How do you know which data package you need can be a challenge.
+
 ```{r}
 library(readr)
 library(tidyverse)
 ```
 
+Loading these packages gives you some good information, and tells you what the conflicts {tidyverse} has. It conflicts with the {stats} base package. The best way to avoid this is to load {tidyverse} *last*.
+
+## Loading Data
+
+Let's start with loading data into R. It's *easy*! Unless it's not. The single line of code below will load the data named `training-scales.csv` contained in the `data` folder. But sometimes it's not as obvious the best way to load data. Until you become familiar with the different packages and data types R can handle, you may need to cheat. In the bottom right corner or RStudio, you can navigate to the `data` folder by clicking the name. Then, click the `training-scales.csv` file, which will give you the option to "View File" or "Import Dataset..." Selecting "Import Dataset..." will give you a dialogue box that shows you what your file looks like, gives you options for importing the data, and gives you the code you need. You can use this dialogue box, but I recommend using the "Code Preview" and copying the code to paste into your own script. With other types of data files, this preview won't work, so only use it as an aide.
 
 ```{r}
 training_data <- read_csv("data/training-scales.csv")
 ```
 
-# Inspect
+# Inspect your data
+
+Now, let's look at our data.
+
 ```{r}
-glimpse(training_data)
-
-dim(training_data)
-
-summary(training_data)
-
-head(training_data)
+training_data
 ```
 
+The RMarkdown file that we are using gives you a built in data viewer. You can explore each column and row, but you're fairly limited. You get 10 rows and 10 columns per page and that's just not enough! Instead, RStudio's built in viewer is a bit more flexible:
+
+```{r}
+View(training_data)
+```
+
+There are a few more ways that we can inspect our data. Try out each of the following functions and see how they represent the data in a new way.
+
+```{r}
+# Glimpse lets you do just that. You can get a broad overview of the size of the data, column names, data types, and the first few rows.
+glimpse(training_data)
+
+# Dim gives you the dimensions--numbers of rows and columns--in the data. This is especially useful when you need to check that a transformation didn't change your dataset in a way you didn't intend.
+dim(training_data)
+training_data <- training_data %>% mutate(leo = as_factor(leo))
+# Summary is a common function you will use a lot. For a dataset/data frame, if gives you basic information about each column, based on it's type.
+# Numeric - For columns of numbers, it gives you minimum, maximum, mean, and 25th and 7th quartiles.
+# Data - Same as for numeric columns, but minimum corresponds to earlier (longer ago), and maximum is more recent.
+# Character - Only shows that it is a character type.
+# Category - For categorical/ordinal variables, each level/category is displayed and the count in that level is provided.
+summary(training_data)
+
+# Finaly, the head and tail functions give you the first/last 10 rows. You can even change the number of rows it gives you by providing an `n = ` with the number of rows you want.
+head(training_data) ;tail(training_data, n = 3)
+```
+## Plotting data
+You should never only look at number! Plotting data is a great method to learn more about your data. We'll practice more with this later, but the following functions are always useful for getting a sense of 
 ```{r}
 plot(training_data$burnout4)
 hist(training_data$ooas6)
 qplot(training_data$mhl2)
-?
+
 ```
 
-
 # Investigating Scores
+
 ```{r}
 training_data %>% 
   summarise(duration_mean = mean(duration_in_seconds),
@@ -68,6 +105,7 @@ training_data %>%
 ```
 
 ## An alternative summarization
+
 ```{r}
 training_data %>% 
   pivot_longer(burnout1:burnout9) %>% 
@@ -79,8 +117,8 @@ training_data %>%
             IQR = IQR(value, na.rm = TRUE))
 ```
 
-
 ## Sum Scores
+
 ```{r}
 with(training_data,
      rowSums(cbind(burnout1, burnout2, burnout3,
@@ -95,11 +133,13 @@ burnout <- training_data %>%
 ```
 
 ### A brief stats lesson: Standard Deviation & IQR, Simple Measures of Spread
+
 #### Standard Deviation
+
 $$
 \sigma = \sqrt{\sigma^2} = \sqrt{\frac{\Sigma(x_i - \mu)^2}{N}}
-$$
-#### Interquartile Range
+$$ \#### Interquartile Range
+
 ```{r}
 x <- seq(1:10)
 x
@@ -112,8 +152,8 @@ quantile(x)
 IQR(x)
 ```
 
-
 ## Missing Data
+
 ```{r}
 sum(complete.cases(training_data))
 
@@ -127,10 +167,8 @@ missing_pct <- function(data){
 missing_pct(training_data)
 ```
 
-
-
-
 # Visualize
+
 ## Scatterplots
 
 ```{r}
@@ -153,6 +191,7 @@ training_data %>%
 ```
 
 ## Barcharts
+
 ```{r}
 training_data %>% 
   ggplot() +
@@ -175,12 +214,12 @@ training_data %>%
 ```
 
 ## Box and Violin Plots
+
 ```{r}
 training_data %>% 
   ggplot() +
   geom_boxplot(aes(x = ethnicity, y = age, fill = ethnicity))
 ```
-
 
 ```{r}
 training_data %>% 
@@ -202,14 +241,8 @@ training_data %>%
   geom_boxplot( width = .3)
 ```
 
-
-
-
-
-
-
 ##### Session Info
+
 ```{r}
 sessionInfo()
 ```
-
