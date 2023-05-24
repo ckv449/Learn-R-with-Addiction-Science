@@ -68,16 +68,47 @@ summary(training_data)
 head(training_data) ;tail(training_data, n = 3)
 ```
 ## Plotting data
-You should never only look at number! Plotting data is a great method to learn more about your data. We'll practice more with this later, but the following functions are always useful for getting a sense of 
+You should never only look at number! Plotting data is a great method to learn more about your data. We'll practice more with this later, but the following functions are always useful for getting a sense of what your data look like. We'll spend more time with {ggplot2}, the corvette of R plotting shortly. But for now, let's start with some base R functions: `plot` and `hist`.
+
+Plot is the all purpose workhorse built into R. Most packages have an addition to `plot` that makes it useful for whatever type of data you have. Below are a few examples of how you can use this. First, you can plot all values of a single variable. Next, `plot` makes bivariate scatter plots when supplied with two numeric variables. Finally, plot can provide plots of analyses under most situations.
 ```{r}
-plot(training_data$burnout4)
+# Single variable Plot
+# The $ is called an atomic operator. You can select a smaller piece of a larger object with it. In this case, the data `training_data` is the large object, and column `year_field` is the smaller object.
+plot(training_data$year_field)
+
+# Bivariate Scatter Plot
+# Here `with` tells R which object to use, then you only supply plot with the columns of interest. 
+#`rank` transforms the `duration_in_seconds` column into a rank ordered variable.
+with(training_data, 
+     plot(rank(duration_in_seconds), age)
+     )
+# `lm` performs and OLS linear regression, and `plot` produces summary plots.
+plot(
+  lm(training_data$burnout1 ~ training_data$burnout2)
+  )
+```
+
+Histograms are another useful way to evaluate data. A histogram "bins" data and gives you a count of the number of responses per bin. You can see a few examples below. 
+```{r}
+# This is an unattractive histogram of one of the variables from our dataset. 
 hist(training_data$ooas6)
-qplot(training_data$mhl2)
+
+# This will generate a histogram of a random normal distribution.
+hist(
+  # `rnorm` produces n random draws that requires two moments: mean and standard deviation. 
+  rnorm(
+    # The number of draws
+    n = 500,
+    # The mean, or average, which is where a normal distribution is centred.
+    mean = 2.5, 
+    # The standard deviation, or spread of a distribution. We'll talk about it more shortly.
+    sd = .7)
+)
 
 ```
 
 # Investigating Scores
-
+Now that we've discussed some ways to inspect data, let's talk about summarizing it. As noted above, mean and standard deviation are useful ways to summarize many distributions. They also have very easy to remember functions in R: `mean` gives you an arithmetic mean, and `sd` computes standard deviations. To start, let's look at how you can obtain them. This first method is a way to obtain as many summary statistics of numeric data as possible, but it doesn't work. What is the error?
 ```{r}
 training_data %>% 
   summarise(duration_mean = mean(duration_in_seconds),
@@ -86,7 +117,7 @@ training_data %>%
             burnout1_sd = sd(burnout1))
 
 ```
-
+Many of our variable has missing data. R's default is to not anticipate msising data. This is a good thing! It can be annoying, but not knowing you have missing data is a problem. That being said, you still need a way to obtain summary statistics despite this! Here's how you tell functions like `mean` and `sd` to ignore them:
 ```{r}
 training_data %>% 
   summarise(duration_mean = mean(duration_in_seconds),
@@ -94,7 +125,7 @@ training_data %>%
             burnout1_mean = mean(burnout1, na.rm = TRUE),
             burnout1_sd = sd(burnout1, na.rm = TRUE))
 ```
-
+We can also use the `group_by` Tidyverse function to get these estimates by group:
 ```{r}
 training_data %>% 
   group_by(leo) %>% 
@@ -104,8 +135,34 @@ training_data %>%
             burnout1_sd = sd(burnout1, na.rm = TRUE))
 ```
 
-## An alternative summarization
+### A brief stats lesson: Standard Deviation & IQR, Simple Measures of Spread
 
+#### Standard Deviation
+Standard deviation is a measure of data dispersal. The higher it is, the further spread apart data points are. It's also the square root of variance. See the image and equation below.
+$$
+\sigma = \sqrt{\sigma^2} = \sqrt{\frac{\Sigma(x_i - \mu)^2}{N}}
+$$ 
+
+![sd image](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/1200px-Standard_deviation_diagram.svg.png)
+
+#### Interquartile Range
+The interquartile range is another measure of dispersion. It is much more applicable to medians rather than means, but it can also be useful. Here is how it is calculated:
+```{r}
+x <- seq(1:10)
+x
+
+median(x)
+
+quantile(x)
+
+7.75-3.25
+IQR(x)
+
+```
+\end stats break
+
+## An alternative summarization
+The above method for summarizing works well, but it can be tedious if you want a lot of individual summary statistics--you have to code each one separately! Instead, learning how to pivot data is a great way to get a lot more summary stats quickly:
 ```{r}
 training_data %>% 
   pivot_longer(burnout1:burnout9) %>% 
@@ -118,44 +175,51 @@ training_data %>%
 ```
 
 ## Sum Scores
-
+Finally, adding up scales scores is always useful. We won't always want item level scores, so sum scores are a great way to summarize every item together. The `rowSums` function does so. 
 ```{r}
+# Using rowSums with `cbind`.
 with(training_data,
      rowSums(cbind(burnout1, burnout2, burnout3,
                    burnout4, burnout5, burnout6,
                    burnout7, burnout8, burnout9), na.rm = TRUE)
 )
 
+# Adding them together
+with(training_data,
+     burnout1+burnout2+burnout3+burnout4+burnout5+burnout6+burnout7+burnout8+burnout9
+)
+
+# `cbind` produces a dataframe/array
+with(training_data,
+     cbind(burnout1, burnout2, burnout3,
+                   burnout4, burnout5, burnout6,
+                   burnout7, burnout8, burnout9)
+     )
+
+# Creating a burnout object
 burnout <- training_data %>% 
   select(burnout1:burnout9)
 
+# Adding sum scores to our burnout object
+burnout <- training_data %>% 
+  mutate(sum = rowSums(cbind(burnout1, burnout2, burnout3,
+                              burnout4, burnout5, burnout6,
+                              burnout7, burnout8, burnout9), na.rm = TRUE))
 
-```
+# Plotting our burnout sum scores.
+plot(burnout$sum)
+hist(burnout$sum)
 
-### A brief stats lesson: Standard Deviation & IQR, Simple Measures of Spread
-
-#### Standard Deviation
-
-$$
-\sigma = \sqrt{\sigma^2} = \sqrt{\frac{\Sigma(x_i - \mu)^2}{N}}
-$$ \#### Interquartile Range
-
-```{r}
-x <- seq(1:10)
-x
-
-median(x)
-
-quantile(x)
-
-7.75-3.25
-IQR(x)
 ```
 
 ## Missing Data
-
+Missing data is a problem. We won't spend time now on it, but here are a few functions we can use to investigate the amount of missing data. And, we'll build our first function! Don't worry yet about how functions work, you can copy and paste this one as much as you need!
 ```{r}
 sum(complete.cases(training_data))
+
+sum(is.na(training_data))
+
+sum(!is.na(training_data))
 
 missing_pct <- function(data){
   # The total count of missing data
