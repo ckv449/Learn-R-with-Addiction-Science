@@ -232,42 +232,70 @@ missing_pct(training_data)
 ```
 
 # Visualize
+Visualization may be more important for investigating data than using numbers. Sometimes numbers can be misleading, and if you don't graph your data, you'll never know. In this section, we'll talk about ways that you can start graphing your data that's both nice looking and useful.
 
-## Scatterplots
+## Scatter plots
+Scatter plots. We've already looked at what a scatter plot is above, but now let's use {ggplot2} to make even fancier ones.
 
+As we've mentioned, a scatter plot is a way to graph bivariate relationships. It plots a single data point at each combination of two variables on the x- and y-axis. First, let's start with a simple scatter plot. The code below may use some notation and symbols you are not familiar with, but don't worry about that for now.
+
+For these graphs, we're using {ggplot2}. It's part of the Tidyverse, so you don't need to load any packages. What you do need to know is that ggplot uses a very specific notation that we'll have to practice.
 ```{r}
+# Data always comes first. The symbol here is the pipe. We'll talk about it later in more depth.
 training_data %>% 
+  # For every plot, you have to have a canvas. the `ggplot` function is your canvas.
   ggplot() +
-  geom_point(aes(x = age, y = year_field))
+  # Now we tell R that we what points on top of our canvas.
+  geom_point(
+    # aes stands for "Aesthetic"; what do we want our points made of?
+    aes(
+      # Here we assign variables to each axis.
+      x = age, 
+      y = year_field))
 ```
 
+This is a basic scatter plot. It shows a clear positive relationships. This makes sense, you can't be in a field longer than you've been alive! This is a useful way to check our data: do any of our participants report having been first responders longer than they've been alive?
+
+### Basic Customizations
+Now, our participants are not all the same. Some of them are law enforcement officers (LEO), some are emergency medical service personnel (EMS). In our data, this is represented by the leo variable, where 1 = LEO and 0 = EMS. We can use the color argument to help use see which is which.
+
 ```{r}
 training_data %>% 
   ggplot() +
+  # Here we've added the color argument inside the `aes` function.
   geom_point(aes(x = age, y = year_field, color = factor(leo)))
 ```
 
+Maybe it would be easier to look at our participants' age:tenure relationship more separately. I'm slightly concerned that we can't see everyone very well, are there really that few EMS? We can separate out plots using the `facet_wrap` function. 
 ```{r}
 training_data %>% 
   ggplot() +
   geom_point(aes(x = age, y = year_field, color = factor(leo))) +
+  # `facet_wrap` is useful to separate single plots into multiple facets.
   facet_wrap(~ leo)
 ```
 
-## Barcharts
+There, now we can see that this relationship is fairly similar across both types of participants. What other variables do we have that we can use to facet our scatter plots with?
 
+## Bar Charts
+Bar charts or bar graphs are another great way to visualize data. A bar chart is good to get a sense of the number of counts within a category. Below, you can see how the bar chart shows us how many participants selected each gender category.
 ```{r}
 training_data %>% 
   ggplot() +
+  # Because bar charts display counts, only a single variable is required.
   geom_bar(aes(x = gend))
 ```
 
+Part of what makes {ggplot2} such a useful tools is that it is infinitely customizable. We can apply the same use of `facet_wrap` to a bar chart just as easily as to a scatter plot
 ```{r}
 training_data %>% 
   ggplot() +
   geom_bar(aes(x = gend)) +
+  # Now we add the same line of code as above.
   facet_wrap(~ leo)
 ```
+
+>Brief data viz break: Turning a bar chart on it's side is a great way to make bar charts nicer to look at and easier to read. 
 
 ```{r}
 training_data %>% 
@@ -279,18 +307,22 @@ training_data %>%
 
 ## Box and Violin Plots
 
+The last type of visualizations we'll cover are box and violin plots. These are roughly the same in their use, but are good for different things. A box plot will show you median, IQR, and range, as below. 
 ```{r}
 training_data %>% 
   ggplot() +
+  # Here I've gone ahead and added color to make it more interesting.
   geom_boxplot(aes(x = ethnicity, y = age, fill = ethnicity))
 ```
 
+A violin plot does the same, except it also represents the density of data points. Thicker violin plots means more data points, thinner means fewer data points. Does the violin plot below provide you with any additional information about the relationship between participants' age and ethnicity?
 ```{r}
 training_data %>% 
   ggplot() +
   geom_violin(aes(x = ethnicity, y = age, fill = ethnicity))
 ```
 
+These types of plots represent data in related, but different ways. You may even see them done together. Because {ggplot2} is like painting, you can combine multiple visualizations in a single plot. Notice how the code below supplies the needed variable information to both plot types.
 ```{r}
 training_data %>% 
   ggplot() +
@@ -298,11 +330,44 @@ training_data %>%
   geom_boxplot(aes(x = ethnicity, y = age), width = .3)
 ```
 
+A nice part about {ggplot2} is that you can supply your graphs with information in multiple ways. This is the same graph, but notice that I placed most of my variable information in the initial "canvas" function.
 ```{r}
 training_data %>% 
   ggplot(aes(x = ethnicity, y = age)) +
   geom_violin(aes(fill = ethnicity)) +
-  geom_boxplot( width = .3)
+  geom_boxplot(width = .3)
+```
+
+## Getting Crazy with {ggplot2}
+There is no end of customizability with Tidyverse functions and {ggplot2}. Below is a small example of adding multiple elements to a single chart. Is it great Data Viz? Probably not.
+
+```{r}
+# Wrangle data
+training_data %>% 
+  filter(!is.na(ethnicity)) %>% 
+  mutate(long = case_when(
+    duration_in_seconds <= 900 ~ "Less than 15 Minutes",
+    duration_in_seconds > 900 ~ "Greater than 15 Minutes"
+  )) %>% 
+  
+  # Plot data
+  ggplot(aes(x = ethnicity, y = age)) +
+  geom_violin(aes(fill = ethnicity)) +
+  geom_jitter(alpha = .3) +
+  geom_boxplot(width = .3) +
+  cowplot::theme_cowplot() + 
+  ggtitle("Distribution of Age by Ethnicity",
+          subtitle = "Faceted by how long it took for participants to complete the survey.") +
+  labs(x = "Participants' Reported Ethnicity",
+       y = "Participants' Age in Years",
+       caption = "This graph uses jitter to spread age data out for interpretability of data points.") +
+  theme(legend.position = "none") + 
+  facet_wrap(~ long,
+             strip.position = 'bottom',
+             scales = "free"
+             )
+  
+  
 ```
 
 ##### Session Info
