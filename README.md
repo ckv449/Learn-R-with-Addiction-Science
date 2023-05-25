@@ -55,8 +55,8 @@ with the following code in R:
     # install.packages("usethis")
 
     # Then execute the following line of code:
-    usethis::create_from_github("https://github.com/zbudesa/Learn-R-with-Addiction-Science", 
-    destdir = "<SET DESTINATION FOLDER ON YOUR COMPUTER>")
+    usethis::use_course("https://github.com/zbudesa/Learn-R-with-Addiction-Science/archive/refs/heads/main.zip", 
+      destdir = "<SET DESTINATION FOLDER ON YOUR COMPUTER>")
 
 Set a destination inside of the quotation marks. For example, on my USML
 owned PC, `"C:/Users/zrbxv2/OneDrive - University of Missouri/Desktop"`
