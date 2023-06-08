@@ -39,11 +39,23 @@ sd(training_data$progress)
 
 # Interquartile Range
 IQR(training_data$progress)
-
-
 ```
-These all work without a problem. This isn't the case when you have missing data 
-# Functions with Missing Data
+
+These all work without a problem. This isn't the case when you have missing data. The progress column has data for every row: 
+```{r}
+is.na(training_data$progress)
+
+sum(is.na(training_data$progress))
+```
+The `is.na` command is very useful to give you information about missing data, and is always a nice check. As we can see, there are no missing values in the progress column. Age, on the other hand, has a good bit of missing data:
+```{r}
+is.na(training_data$age)
+
+sum(is.na(training_data$age))
+```
+
+When a column has missing data, R wants to keep that in mind, and unless you tell it to think otherwise it will throw errors 
+
 ```{r}
 # Artimetic average
 mean(training_data$age, na.rm = TRUE)
@@ -86,15 +98,98 @@ all.equal(progress_ooas3, progress_ooas_missing6)
 
 all.equal(progress_ooas3, training_data)
 
-progress.ooas
+progress_ooas
 ```
 
 # Filter
 
+```{r}
+burnout <- training_data %>% 
+  select(progress, age,
+         burnout1, burnout2, burnout3,
+         burnout4, burnout5, burnout6,
+         burnout7, burnout8, burnout9)
+
+burnout
+```
+
+```{r}
+range(burnout$progress)
+
+burnout_incomplete <- burnout %>% 
+  filter(progress < 100)
+
+burnout_incomplete
+```
+
+```{r}
+burnout_no_age <- burnout %>% 
+  filter(is.na(age))
+
+burnout_no_age
+```
+
+```{r}
+burnout_complete <- burnout %>% 
+  filter(progress == 100 &
+           !is.na(age))
+
+burnout_complete
+
+is.na(burnout_complete)
+```
 
 
 # Mutate
 
+```{r}
+burnout[-c(1:2)]
+```
+
+```{r}
+burnout <- burnout %>% 
+  mutate(burnout_sum = burnout1 + burnout2 + burnout3 + burnout4 + burnout5 + burnout6 + burnout7 + burnout8 + burnout9)
+```
+
+```{r}
+burnout %>% 
+  mutate(
+    sum = sum(burnout1, burnout2, burnout3, burnout4, burnout5, burnout6, burnout7, burnout8, burnout9, na.rm = TRUE)
+    )
+```
+
+```{r}
+burnout %>% 
+  mutate(
+    sum = rowSums(
+      select(.,burnout1:burnout9),
+      na.rm = TRUE)
+    )
+```
+
+```{r}
+burnout <- burnout %>% 
+  mutate(
+    sum = rowSums(
+      select(., burnout1:burnout9),
+      na.rm = TRUE),
+    mean = rowMeans(
+      select(., burnout1:burnout9),
+    )
+    )
+
+burnout
+```
+
+```{r}
+# Plotting our burnout sum scores.
+plot(burnout$sum)
+hist(burnout$mean)
+
+
+plot(burnout$sum,
+     burnout$mean)
+```
 
 
 

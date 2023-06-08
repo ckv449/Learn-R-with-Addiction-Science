@@ -174,43 +174,7 @@ training_data %>%
             IQR = IQR(value, na.rm = TRUE))
 ```
 
-## Sum Scores
-Finally, adding up scales scores is always useful. We won't always want item level scores, so sum scores are a great way to summarize every item together. The `rowSums` function does so. 
-```{r}
-# Using rowSums with `cbind`.
-with(training_data,
-     rowSums(cbind(burnout1, burnout2, burnout3,
-                   burnout4, burnout5, burnout6,
-                   burnout7, burnout8, burnout9), na.rm = TRUE)
-)
 
-# Adding them together
-with(training_data,
-     burnout1+burnout2+burnout3+burnout4+burnout5+burnout6+burnout7+burnout8+burnout9
-)
-
-# `cbind` produces a dataframe/array
-with(training_data,
-     cbind(burnout1, burnout2, burnout3,
-                   burnout4, burnout5, burnout6,
-                   burnout7, burnout8, burnout9)
-     )
-
-# Creating a burnout object
-burnout <- training_data %>% 
-  select(burnout1:burnout9)
-
-# Adding sum scores to our burnout object
-burnout <- training_data %>% 
-  mutate(sum = rowSums(cbind(burnout1, burnout2, burnout3,
-                              burnout4, burnout5, burnout6,
-                              burnout7, burnout8, burnout9), na.rm = TRUE))
-
-# Plotting our burnout sum scores.
-plot(burnout$sum)
-hist(burnout$sum)
-
-```
 
 ## Missing Data
 Missing data is a problem. We won't spend time now on it, but here are a few functions we can use to investigate the amount of missing data. And, we'll build our first function! Don't worry yet about how functions work, you can copy and paste this one as much as you need!
