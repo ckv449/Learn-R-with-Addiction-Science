@@ -5,34 +5,66 @@ date: "2023-05-16"
 output: html_document
 ---
 
+# Setup
+
+For this less, we'll use the same data from last time. If you've already loaded the packages and data, you can skip this first block.
 ```{r setup}
 library(readr)
 library(tidyverse)
-```
 
-
-```{r}
+# Load data
 training_data <- read_csv("data/training-scales.csv")
 ```
-
+# Investigating data
+We've already learned a few ways that we can inspect a full data frame. If you'll remember, we've already used `head` to look at the top 10 rows of a data frame. Let's try that again here.
 ```{r}
 head(training_data)
 ```
-
+We also have talked a little about the common functions to do basic statistics. All of the common measures of central tendency and spread are basically what you think that would be in R. They are a bit different than Excel, as the command is `mean`, not ave or average; you'll also want to use `sd` instead of std.dev. But they all tend to be a reasonable word that you should come to remember pretty quickly. Let's experiment with them below.
 ```{r}
+# Arithmetic average/mean
 mean(training_data$progress)
 
+# Lowest value/Minimum
 min(training_data$progress)
 
+# Highest Value/Maximum
 max(training_data$progress)
 
+# Range
 range(training_data$progress)
 
+# Standard deviation
 sd(training_data$progress)
 
-table(training_data$progress)
+# Interquartile Range
+IQR(training_data$progress)
+
+
+```
+These all work without a problem. This isn't the case when you have missing data 
+# Functions with Missing Data
+```{r}
+# Artimetic average
+mean(training_data$age, na.rm = TRUE)
+
+min(training_data$age, na.rm = TRUE)
+
+max(training_data$age, na.rm = TRUE)
+
+range(training_data$age, na.rm = TRUE)
+
+sd(training_data$age, na.rm = TRUE)
+
+IQR(training_data$age, na.rm = TRUE)
 ```
 
+# Tables
+```{r}
+table(training_data$progress)
+
+table(training_data$age)
+```
 # Select
 ```{r}
 
