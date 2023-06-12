@@ -72,6 +72,14 @@ Finally, you can access all of the code through your browser. Copying
 and pasting code is probably not the most exciting or fastest way to
 explore this class, but hey, you do you.
 
+# Recordings
+
+-   [Meeting
+    1](https://umsystem.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=42c25ee1-edaa-4e77-8184-b00d013a09ba)
+
+-   [Meeting
+    2](https://umsystem.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=9e9a5613-a0de-43b0-825e-b01b0138dd8d)
+
 # Books and Resources
 
 These lessons have been heavily adapted from the following resources:
